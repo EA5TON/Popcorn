@@ -12,7 +12,6 @@ enum EPlatform_State
     EPS_Roll_In,
     EPS_Expand_Roll_In
 };
-
 //------------------------------------------------------------------------------------------------------------------------
 class AsPlatform: public AHit_Checker
 {

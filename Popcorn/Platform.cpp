@@ -364,7 +364,6 @@ bool AsPlatform::Reflect_On_Circle (double next_x_pos, double next_y_pos, double
     double alpha, beta, gamma;
     double related_ball_direction;
 
-
     platform_ball_radius = (double) Circle_Size / 2.0;
     platform_ball_x = (double) X_Pos + platform_ball_radius + platform_ball_x_offset;
     platform_ball_y = (double) AsConfig::Platform_Y_Pos + platform_ball_radius;
