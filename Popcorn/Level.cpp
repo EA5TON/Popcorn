@@ -11,7 +11,7 @@ char AsLevel::Level_1 [AsConfig::Level_Height][AsConfig::Level_Width] =
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    2, 2, 2, 2, 2, 2, 2, 2, 7, 6, 5, 4,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 8,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -40,8 +40,9 @@ char AsLevel::Test_Level [AsConfig::Level_Height][AsConfig::Level_Width] =
 // AsLevel.
 //------------------------------------------------------------------------------------------------------------------------
 AsLevel::AsLevel ()
-: Level_Rect {}, Active_Bricks_Count (0), Falling_Letters_Count (0)
-{
+: Level_Rect {}, Active_Bricks_Count (0), Falling_Letters_Count (0), 
+  Parachute_Color (AsConfig::Purpule_Color, AsConfig::Whiteblue_Color, AsConfig::Global_Scale)
+{ 
 }
 //------------------------------------------------------------------------------------------------------------------------
 bool AsLevel::Check_Hit (double next_x_pos, double next_y_pos, ABall *ball)
@@ -93,23 +94,21 @@ bool AsLevel::Check_Hit (double next_x_pos, double next_y_pos, ABall *ball)
                     ball-> Reflect (true);
                 else
                     ball-> Reflect (false);
-                    On_Hit (j, i);
+                    On_Hit (j, i, ball);
                     return true;
             }
-            else
-                if (got_horizontal_hit)
-                {
-                    ball-> Reflect (false);
-                    On_Hit (j, i);
-                    return true;
-                }
-                else
-                    if (got_vertical_hit)
-                    {
-                        ball-> Reflect (true);
-                        On_Hit (j, i);
-                        return true;
-                    }
+            else if (got_horizontal_hit)
+            {
+                ball-> Reflect (false);
+                On_Hit (j, i, ball);
+                return true;
+            }
+            else if (got_vertical_hit)
+            {
+                ball-> Reflect (true);
+                On_Hit (j, i, ball);
+                return true;
+            }
         }
     }
     return false;
@@ -188,13 +187,19 @@ bool AsLevel::Get_Next_Falling_Letter (int &index, AFalling_Letter **falling_let
     return false;
 }
 //------------------------------------------------------------------------------------------------------------------------
-void AsLevel::On_Hit (int brick_x, int brick_y)
+void AsLevel::On_Hit (int brick_x, int brick_y, ABall *ball)
 {
     EBrick_Type brick_type;
 
     brick_type = (EBrick_Type) Current_Level [brick_y][brick_x];
 
-    if (Add_Falling_Letter (brick_x, brick_y, brick_type))
+    if (brick_type == EBT_Parachute)
+    {
+        ball-> Set_On_Parachute (brick_x, brick_y);
+        Current_Level [brick_y][brick_x] = EBT_None;
+    }
+
+    else if (Add_Falling_Letter (brick_x, brick_y, brick_type))
         Current_Level [brick_y][brick_x] = EBT_None;
     else
         Add_Active_Brick (brick_x, brick_y, brick_type);
@@ -388,9 +393,41 @@ void AsLevel::Draw_Brick (HDC hdc, RECT &brick_rect, EBrick_Type brick_type)
         AActive_Brick_Multihit::Draw_In_Level (hdc, brick_rect, brick_type);
         break;
 
+    case EBT_Parachute:
+        Draw_Parachute_In_Level (hdc, brick_rect);
+        break;
+
     default:
         AsConfig::Throw ();
     }
+}
+//------------------------------------------------------------------------------------------------------------------------
+void AsLevel::Draw_Parachute_In_Level(HDC hdc, RECT &brick_rect)
+{
+    Draw_Parachute_Part (hdc, brick_rect, 0, 4);
+    Draw_Parachute_Part (hdc, brick_rect, 4, 6);
+    Draw_Parachute_Part (hdc, brick_rect, 10, 4);
+}
+//------------------------------------------------------------------------------------------------------------------------
+void AsLevel::Draw_Parachute_Part (HDC hdc, RECT &brick_rect, int offset, int width)
+{
+    const int scale = AsConfig::Global_Scale;
+    RECT rect;
+
+    // 1. Верхний сегмент.
+    rect.left = brick_rect.left + offset * scale + 1;
+    rect.top = brick_rect.top + 1;
+    rect.right = rect.left + width * scale + 1;
+    rect.bottom = rect.top + 3 * scale + 1;
+
+    Parachute_Color.Select (hdc);
+    AsConfig::Round_Rect (hdc, rect);
+
+    // 2. Нижний сегмент.
+    rect.top += 3 * scale;
+    rect.bottom += 3 * scale;
+
+    AsConfig::Round_Rect (hdc, rect);
 }
 //------------------------------------------------------------------------------------------------------------------------
 void AsLevel::Draw_Objects (HDC hdc, RECT &paint_area, AGraphics_Object **objects_array, int objects_max_count)
