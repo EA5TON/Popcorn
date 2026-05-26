@@ -45,7 +45,7 @@ void AFalling_Letter::Draw (HDC hdc, RECT &paint_area)
 {
     RECT intersection_rect;
 
-    // 1. Очищаем фон.
+    // 1. пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ.
     if (IntersectRect (&intersection_rect, &paint_area, &Prev_Letter_Cell))
     {
         AsConfig::BG_Color.Select (hdc);
@@ -141,20 +141,20 @@ void AFalling_Letter::Set_Brick_Letter_Colors (bool is_switch_color, const AColo
 }
 //------------------------------------------------------------------------------------------------------------------------
 void AFalling_Letter::Draw_Brick_Letter (HDC hdc)
-{// Вывод падающей буквы.
+{// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.
 
     bool switch_color;
     double offset;
-    double rotation_angle; // Преобразование шага в угол поворота.
+    double rotation_angle; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
     double y_ratio;
     int back_part_offset;
     const AColor *front_color, *back_color;
     XFORM xform, old_xform;
 
     if (!(Brick_Type == EBT_Whiteblue || Brick_Type == EBT_Purpule))
-        return; // Падающие буквы могут быть только от кирпичей такого типа.
+        return; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ.
 
-    // Корректируем шаг вращени я угол поворота.
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
     Rotation_Step = Rotation_Step % Max_Rotation_Step;
 
     if (Rotation_Step < 8)
@@ -180,17 +180,17 @@ void AFalling_Letter::Draw_Brick_Letter (HDC hdc)
 
     if (Rotation_Step == 4 || Rotation_Step == 12)
     {
-        // Выводим фон.
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ.
         back_color-> Select (hdc);
         Rectangle (hdc, X, Y + Brick_Half_Height - AsConfig::Global_Scale, X + AsConfig::Brick_Width * AsConfig::Global_Scale, Y + Brick_Half_Height);
 
-        // Выводим передний план.
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ.
         front_color-> Select (hdc);
         Rectangle (hdc, X, Y + Brick_Half_Height, X + AsConfig::Brick_Width * AsConfig::Global_Scale, Y + Brick_Half_Height + AsConfig::Global_Scale - 1);
     }
     else
     {
-        // Настраиваем матрицу «переворота» буквы.
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.
         y_ratio  = cos (rotation_angle);
         xform.eM11 = 1.0f;
         xform.eM12 = 0.0f;
@@ -201,7 +201,7 @@ void AFalling_Letter::Draw_Brick_Letter (HDC hdc)
         GetWorldTransform (hdc, &old_xform);
         SetWorldTransform (hdc, &xform);
 
-        // Выводим фон.
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ.
         back_color-> Select (hdc);
         offset = 3.0 * (1.0 - fabs (xform.eM22)) * (double) AsConfig::Global_Scale;
         back_part_offset = (int) round (offset);
@@ -211,7 +211,7 @@ void AFalling_Letter::Draw_Brick_Letter (HDC hdc)
 
         Rectangle (hdc, 0, -Brick_Half_Height - back_part_offset, AsConfig::Brick_Width * AsConfig::Global_Scale - 1, Brick_Half_Height - back_part_offset);
 
-        // Выводим передний план.
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ.
         front_color-> Select (hdc);
         Rectangle (hdc, 0, -Brick_Half_Height, AsConfig::Brick_Width * AsConfig::Global_Scale - 1, Brick_Half_Height);
 
@@ -220,28 +220,28 @@ void AFalling_Letter::Draw_Brick_Letter (HDC hdc)
             AsConfig::Letter_Color.Select_Pen (hdc);
             switch (Letter_Type)
             {
-            case ELT_O: // «Отмена».
+            case ELT_O: // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
                 Ellipse (hdc, 0 + 5 * AsConfig::Global_Scale, 1 * AsConfig::Global_Scale - Brick_Half_Height, 0 + 10 * AsConfig::Global_Scale, 6 * AsConfig::Global_Scale - Brick_Half_Height - 1);
                 break;
 
-            case ELT_I: // «Инверсия».
+            case ELT_I: // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
                 Draw_Line (hdc, 5, 1, 5, 6);
                 Draw_Line_To (hdc, 9, 1);
                 Draw_Line_To (hdc, 9, 6);
                 break;
 
-            case ELT_C: // «Скорость».
+            case ELT_C: // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
                 Draw_C (hdc);
                 break;
 
-            case ELT_M: // «Монстры».
+            case ELT_M: // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
                 Draw_Line (hdc, 5, 6, 5, 1);
                 Draw_Line_To (hdc, 7, 3);
                 Draw_Line_To (hdc, 9, 1);
                 Draw_Line_To (hdc, 9, 6);
                 break;
 
-            case ELT_G: // «Жизнь».
+            case ELT_G: // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
                 Draw_Line (hdc, 7, 1, 7, 6);
                 Draw_Line (hdc, 5, 3, 9, 3);
                 Draw_Line (hdc, 4, 1, 5, 3);
@@ -250,36 +250,36 @@ void AFalling_Letter::Draw_Brick_Letter (HDC hdc)
                 Draw_Line (hdc, 9, 3, 10, 6); 
                 break;
 
-            case ELT_K: // «Клей».
+            case ELT_K: // пїЅпїЅпїЅпїЅпїЅ.
                 Draw_Line (hdc, 5, 1, 5, 6);
                 Draw_Line (hdc, 5, 5, 9, 1);
                 Draw_Line (hdc, 7, 4, 9, 6);
                 break;
 
-            case ELT_W: // «Ширина».
+            case ELT_W: // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
                 Draw_Line (hdc, 4, 1, 4, 6);
                 Draw_Line_To (hdc, 10, 6);
                 Draw_Line_To (hdc, 10, 1);
                 Draw_Line (hdc, 7, 1, 7, 6);
                 break;
 
-            case ELT_P: // «Пол».
+            case ELT_P: // пїЅпїЅпїЅпїЅ.
                 Draw_Line (hdc, 5, 6, 5, 1);
                 Draw_Line_To (hdc, 9, 1);
                 Draw_Line_To (hdc, 9, 6);
                 break;
 
-            case ELT_L: // «Лазер».
+            case ELT_L: // пїЅпїЅпїЅпїЅпїЅпїЅ.
                 Draw_Line (hdc, 5, 6, 7, 1);
                 Draw_Line_To (hdc, 9, 6);
                 break;
 
-            case ELT_T: // «Три».
+            case ELT_T: // пїЅпїЅпїЅпїЅ.
                 Draw_Line (hdc, 5, 1, 9, 1);
                 Draw_Line (hdc, 7, 1, 7, 6);
                 break;
 
-            case ELT_Plus: // Переход на следующий уровень.
+            case ELT_Plus: // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
                 Draw_Line (hdc, 7, 1, 7, 5);
                 Draw_Line (hdc, 5, 3, 9, 3);
                 break;
