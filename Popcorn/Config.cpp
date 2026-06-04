@@ -63,6 +63,9 @@ const AColor AsConfig::Purpule_Color (255, 1, 255);
 const AColor AsConfig::Whiteblue_Color (1, 255, 255);
 const AColor AsConfig::White_Color (255, 255, 255);
 const AColor AsConfig::Letter_Color (AsConfig::White_Color, AsConfig::Global_Scale);
+const AColor AsConfig::Unbreakable_Purpule_Highlight (AsConfig::Purpule_Color, 3 * AsConfig::Global_Scale);
+const AColor AsConfig::Unbreakable_Whiteblue_Highlight (AsConfig::Whiteblue_Color, AsConfig::Global_Scale);
+const AColor AsConfig::Teleport_Portal_Color (AsConfig::Whiteblue_Color, AsConfig::BG_Color, AsConfig::Global_Scale);
 
 HWND AsConfig::hwnd;
 

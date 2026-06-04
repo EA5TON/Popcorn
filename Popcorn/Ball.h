@@ -8,7 +8,8 @@ enum EBall_State
     EBS_Lost,
     EBS_On_Platform,
     EBS_On_Parachute,
-    EBS_Off_Parachute
+    EBS_Off_Parachute,
+    EBS_Teleporting
 };
 //------------------------------------------------------------------------------------------------------------------------
 class ABall;
@@ -25,6 +26,7 @@ public:
     ABall ();
 
     void Draw (HDC hdc, RECT &paint_area);
+    void Draw_Teleporting (HDC hdc, int step);
     void Move ();
     void Set_For_Test ();
     bool Is_Test_Finished ();
@@ -36,7 +38,7 @@ public:
     bool Is_Moving_Up ();
     bool Is_Moving_Left ();
     void Set_On_Parachute (int brick_x, int brick_y);
-
+    
     double Ball_Speed;
 
     static void Add_Hit_Checker (AHit_Checker *hit_checker); 
