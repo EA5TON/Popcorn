@@ -1,4 +1,4 @@
-#include "Active_Brick.h"
+﻿#include "Active_Brick.h"
 
 // AGraphics_Object.
 //------------------------------------------------------------------------------------------------------------------------
@@ -140,8 +140,6 @@ void AActive_Brick_Purpule_Whiteblue::Get_Fading_Color (const AColor &origin_col
 
 
 // AActive_Brick_Unbreakable
-AColor AActive_Brick_Unbreakable::Purpule_Highlight (AsConfig::Purpule_Color, 3 * AsConfig::Global_Scale);
-AColor AActive_Brick_Unbreakable::Whiteblue_Highlight (AsConfig::Whiteblue_Color, AsConfig::Global_Scale);
 //------------------------------------------------------------------------------------------------------------------------
 AActive_Brick_Unbreakable::~AActive_Brick_Unbreakable ()
 {
@@ -174,11 +172,11 @@ void AActive_Brick_Unbreakable::Draw (HDC hdc, RECT &paint_area)
 
     offset = 2 * Animation_Step * scale - AsConfig::Brick_Width * scale;
 
-    Whiteblue_Highlight.Select_Pen (hdc);
+    AsConfig::Unbreakable_Whiteblue_Highlight.Select_Pen (hdc);
     MoveToEx (hdc, Brick_Rect.left + 4 * scale + offset, Brick_Rect.bottom + scale, 0);
     LineTo (hdc, Brick_Rect.left + 13 * scale - 1+ offset, Brick_Rect.top - 1 * scale);
 
-    Purpule_Highlight.Select_Pen (hdc);
+    AsConfig::Unbreakable_Purpule_Highlight.Select_Pen (hdc);
     MoveToEx (hdc, Brick_Rect.left + 6 * scale + offset, Brick_Rect.bottom + scale, 0);
     LineTo (hdc, Brick_Rect.left + 15 * scale - 1+ offset, Brick_Rect.top - 1 * scale);
 
@@ -229,11 +227,11 @@ void AActive_Brick_Multihit::Draw (HDC hdc, RECT &paint_area)
     double rotation_angle, x_ratio;
     XFORM xform, old_xform;
 
-    // 1. ������� ���.
+    // 1. Очищаем фон.
     AsConfig::BG_Color.Select (hdc);
     AsConfig::Round_Rect (hdc, Brick_Rect);
 
-    // 2. ��������� ������� �������� ������.
+    // 2. Настраиваем матрицу поворота буквы.
     step = Rotation_Step % Steps_Per_Turn;
     rotation_angle = M_PI_2 / 2.0 * (double) step;
     x_ratio = cos (rotation_angle);
@@ -250,7 +248,7 @@ void AActive_Brick_Multihit::Draw (HDC hdc, RECT &paint_area)
     const int scale = AsConfig::Global_Scale;
     RECT zero_rect;
 
-    // 3. ��������� ������.
+    // 3. Рисуем «100».
     AsConfig::Letter_Color.Select_Pen (hdc);
     MoveToEx (hdc, 0 + 1 * scale + 1, 0 + 3 * scale, 0);
     LineTo (hdc, 0 + 3 * scale + 1, 0 + 1 * scale);
@@ -267,7 +265,6 @@ void AActive_Brick_Multihit::Draw (HDC hdc, RECT &paint_area)
     AsConfig::Round_Rect (hdc, zero_rect);
 
     SetWorldTransform (hdc, &old_xform);
-
 }
 //------------------------------------------------------------------------------------------------------------------------
 bool AActive_Brick_Multihit::Is_Finished ()
@@ -279,18 +276,18 @@ bool AActive_Brick_Multihit::Is_Finished ()
 }
 //------------------------------------------------------------------------------------------------------------------------
 void AActive_Brick_Multihit::Draw_In_Level (HDC hdc, RECT &brick_rect, EBrick_Type brick_type)
-{// ����� ����������� ������� �� ������.
+{// Вывод неактивного киприча на уровне.
 
     const int scale = AsConfig::Global_Scale;
 
-    // 1. ������ ���.
+    // 1. Рисуем фон.
     AsConfig::White_Color.Select (hdc);
     AsConfig::Round_Rect (hdc, brick_rect);
 
     AsConfig::Purpule_Color.Select (hdc);
     Rectangle (hdc, brick_rect.left + scale, brick_rect.top + scale, brick_rect.right - scale - 1, brick_rect.bottom -  scale - 1);
 
-    // 2. ������ ���������� ��������������.
+    // 2. Рисуем внутренние прямоугольники.
     switch (brick_type)
     {
     case EBT_Multihit_1:
@@ -321,7 +318,7 @@ void AActive_Brick_Multihit::Draw_In_Level (HDC hdc, RECT &brick_rect, EBrick_Ty
 }
 //------------------------------------------------------------------------------------------------------------------------
 void AActive_Brick_Multihit::Draw_Stage (HDC hdc, RECT &brick_rect, int x, int width)
-{// ��������� ����������� ��������������.
+{// Рисуем внутренний прямоугольник.
 
     const int scale = AsConfig::Global_Scale;
     RECT stage_rect;
@@ -338,3 +335,60 @@ void AActive_Brick_Multihit::Draw_Stage (HDC hdc, RECT &brick_rect, int x, int w
     Rectangle (hdc, stage_rect.left, stage_rect.top, stage_rect.right - 1, stage_rect.bottom - 1);
 }
  //------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+// AActive_Brick_Teleport
+//------------------------------------------------------------------------------------------------------------------------
+AActive_Brick_Teleport::~AActive_Brick_Teleport ()
+{
+}
+//------------------------------------------------------------------------------------------------------------------------
+AActive_Brick_Teleport::AActive_Brick_Teleport (int level_x, int level_y, ABall *ball)
+: AActive_Brick (EBT_Teleport, level_x, level_y), Animation_Step (0), Ball (ball)
+{
+}
+//------------------------------------------------------------------------------------------------------------------------
+void AActive_Brick_Teleport::Act ()
+{
+   if (AsConfig::Current_Timer_Tick % 10 != 0)
+      return;
+
+   if (Animation_Step <= Max_Animation_Step)
+   {
+      ++Animation_Step;
+        InvalidateRect (AsConfig::hwnd, &Brick_Rect, FALSE);
+   }
+}
+//------------------------------------------------------------------------------------------------------------------------
+void AActive_Brick_Teleport::Draw (HDC hdc, RECT &paint_area)
+{
+   Draw_In_Level (hdc, Brick_Rect, Animation_Step);
+   Ball-> Draw_Teleporting (hdc, Animation_Step);
+}
+//------------------------------------------------------------------------------------------------------------------------
+bool AActive_Brick_Teleport::Is_Finished ()
+{
+   if (Animation_Step >= Max_Animation_Step)
+      return true;
+   else
+      return false;
+}
+//------------------------------------------------------------------------------------------------------------------------
+void AActive_Brick_Teleport::Draw_In_Level (HDC hdc, RECT &brick_rect, int step)
+{ // Вывод неактивного кирпича на уровне.
+   
+   const int scale = AsConfig::Global_Scale;
+   int top_y = brick_rect.top + step / 2 + 1;
+   int low_y = brick_rect.top + 6 * scale - step / 2 + 1;
+
+   // Фон.
+   AsConfig::Purpule_Color.Select (hdc);
+   AsConfig::Round_Rect (hdc, brick_rect);
+
+   // Портал.
+   AsConfig::Teleport_Portal_Color.Select (hdc);
+   Ellipse (hdc, brick_rect.left + 3 * scale + 1, top_y, brick_rect.left + 11 * scale + 1, low_y);
+}
+//------------------------------------------------------------------------------------------------------------------------
